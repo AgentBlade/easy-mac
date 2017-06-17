@@ -26,6 +26,7 @@ fi
 echo -en "\n"                                                                                                                           
                                                                                                                                         
 if [[ $1 = "new" ]] ; then                                                                                                              
+    service network-manager stop #stop network-manager
     for interface in $(ls -I "lo" /sys/class/net/) ; do  #enumerating network interfaces, excluding loopback                            
         echo -en "MAC-CHANGING "$interface"!\n"                                                                                         
         ip link set $interface down                                                                                                     
@@ -34,9 +35,10 @@ if [[ $1 = "new" ]] ; then
         sleep 0.5                                                                                                                       
         echo -en "\n"                                                                                                                   
     done                                                                                                                                
-    service network-manager restart    #restart the network manager                                                                     
+    service network-manager start    #restart the network manager                                                                     
     else                                                                                                                                
-        if [[ $1 = "fixed" ]] ; then                                                                                                    
+        if [[ $1 = "fixed" ]] ; then                  
+        service network-manager stop
             for interface in $(ls -I "lo" /sys/class/net/) ; do                                                                         
                 read -p "You've chosen `echo "'$1'"`, enter a MAC for "$interface" please: " fmac                                       
                 echo -en "MAC-CHANGING "$interface"!\n"                                                                                 
@@ -46,7 +48,7 @@ if [[ $1 = "new" ]] ; then
                 sleep 0.5                                                                                                               
                 echo -en "\n"                                                                                                           
             done                                                                                                                        
-            service network-manager restart                                                                                             
+            service network-manager start                                                                                             
         else                                                                                                                            
             echo -en "Usage: $(basename $0) [ new | fixed ]\n\n"                                                                        
             exit 1
